@@ -1,0 +1,46 @@
+{
+    "builders": [
+        {
+            "type": "virtualbox-iso",
+            "vm_name": "centos7-server",
+            "guest_os_type": "RedHat_64",
+            "guest_additions_mode": "attach",
+            "headless": "false",
+            "disk_size": 12000,
+            "vboxmanage": [
+                [ "modifyvm", "{{.Name}}", "--memory", "2048" ],
+                [ "modifyvm", "{{.Name}}", "--cpus", "1" ]
+            ],
+            
+            "http_directory": "html",
+		 "http_port_min": 8401,
+		 "http_port_max": 8401,
+            "boot_command": "<tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter>",
+            "shutdown_command": "echo 'vagrant' | sudo -S poweroff",
+            
+            "iso_checksum_type": "sha1",
+            "iso_checksum": "783EEF50E1FB91C78901D0421D8114A29B998478",
+            "iso_url": "file:///C:/Users/Mike/Documents/Installation%20Images/CentOS-7-x86_64-Minimal-1511.iso",
+            
+            "ssh_username": "vagrant",
+            "ssh_password": "vagrant",
+            "ssh_wait_timeout": "8h"
+        }
+    ],
+    
+    "provisioners": [
+        {
+            "type": "shell",
+            "script": "scripts/provision.sh"
+        }        
+    ],
+
+    "post-processors": [
+     [{
+      "type": "vagrant",
+      "keep_input_artifact": false,
+      "output": "centos7-minimal-{{.Provider}}.box",
+      "vagrantfile_template": "vagrantfile.template"
+     }]
+    ]
+}
